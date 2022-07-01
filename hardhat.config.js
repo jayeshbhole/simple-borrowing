@@ -5,6 +5,8 @@ require("@nomiclabs/hardhat-waffle");
 require("hardhat-gas-reporter");
 require("solidity-coverage");
 
+require("hardhat-deploy");
+
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
@@ -28,6 +30,7 @@ module.exports = {
       allowUnlimitedContractSize: true,
       url: "http://localhost:8545",
       accounts: [process.env.PRIVATE_KEY, process.env.PRIVATE_KEY2],
+      saveDeployments: true,
     },
     hardhat: {
       allowUnlimitedContractSize: true,
@@ -54,10 +57,20 @@ module.exports = {
     goerli: {
       url: process.env.GOERLI_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      verify: {
+        etherscan: {
+          apiKey: process.env.ETHERSCAN_API_KEY,
+        },
+      },
     },
     mumbai: {
       url: process.env.MUMBAI_URL || "",
       accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      verify: {
+        etherscan: {
+          apiKey: process.env.POLYSCAN_API_KEY,
+        },
+      },
     },
   },
   gasReporter: {
@@ -70,6 +83,15 @@ module.exports = {
       goerli: process.env.ETHERSCAN_API_KEY,
       polygonMumbai: process.env.POLYSCAN_API_KEY,
       polygon: process.env.POLYSCAN_API_KEY,
+    },
+  },
+
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    feeCollector: {
+      default: 1,
     },
   },
 };
