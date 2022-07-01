@@ -12,8 +12,9 @@
       "options": {
         "useTabs": false,
         "tabWidth": 4,
-        "printWidth": 80,
-        "explicitTypes": "preserve"
+        "printWidth": 100,
+        "explicitTypes": "preserve",
+        "proseWrap": "always"
       }
     }
   ]
