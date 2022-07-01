@@ -8,7 +8,7 @@ import "./IStable.sol";
 // LAY is an ERC20 stable coin for demonstration purposes of this project.
 // LAY can be burned and minted by liquidators and borrowers.
 
-contract LAY is ERC20, Ownable, IStable {
+contract LAYsToken is ERC20, Ownable, IStable {
     constructor() ERC20("LAYs", "LAY") {
         _mint(msg.sender, 1000000000 * 10**decimals());
     }
