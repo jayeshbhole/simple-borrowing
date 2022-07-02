@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 require("@nomiclabs/hardhat-etherscan");
-require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-ethers");
 require("hardhat-gas-reporter");
 require("solidity-coverage");
 
@@ -90,7 +90,7 @@ module.exports = {
     deployer: {
       default: 0,
     },
-    feeCollector: {
+    user: {
       default: 1,
     },
   },

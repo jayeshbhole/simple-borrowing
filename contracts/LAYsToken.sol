@@ -10,7 +10,7 @@ import "./IStable.sol";
 
 contract LAYsToken is ERC20, Ownable, IStable {
     constructor() ERC20("LAYs", "LAY") {
-        _mint(msg.sender, 1000000000 * 10**decimals());
+        // _mint(msg.sender, 1000000000 * 10**decimals());
     }
 
     function mint(address _to, uint256 _amount) external override onlyOwner returns (bool) {
