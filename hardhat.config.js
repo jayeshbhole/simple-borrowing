@@ -33,6 +33,7 @@ module.exports = {
       saveDeployments: true,
     },
     hardhat: {
+      chainId: 31337,
       allowUnlimitedContractSize: true,
       forking: {
         enabled: true,

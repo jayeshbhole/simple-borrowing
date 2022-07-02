@@ -25,30 +25,20 @@ const Footer = (props) => {
 			borderColor={borderColor}
 			bgColor={bgColor}
 			pos={'sticky'}
-			top={0}>
+			top={0}
+		>
 			<HStack spacing='6' wrap='wrap'>
 				<InternalLink fontWeight='medium' to='/'>
 					Home
 				</InternalLink>
-				<InternalLink fontWeight='medium' to='/Super-Suite'>
-					Super Suite
-				</InternalLink>
-				<InternalLink fontWeight='medium' to='/Super-dHEDGE'>
-					Super-dHEDGE
-				</InternalLink>
-
-				<ExternalLink
-					fontWeight='medium'
-					href='https://d-a-m-p.gitbook.io/dsip/'>
-					Docs
-				</ExternalLink>
 			</HStack>
 
 			<Spacer></Spacer>
 			<ExternalLink
-				href='https://github.com/DAM-Protocol'
+				href='https://github.com/jayeshbhole/simple-borrowing'
 				display='flex'
-				align='center'>
+				align='center'
+			>
 				<Icon as={FaGithub} fontSize='xl' />
 			</ExternalLink>
 			<ColorModeSwitcher size='xl' fontSize='xl' ml='4' />
