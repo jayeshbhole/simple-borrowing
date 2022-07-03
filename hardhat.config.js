@@ -38,7 +38,7 @@ module.exports = {
       forking: {
         enabled: true,
         url: process.env.MUMBAI_URL,
-        blockNumber: 7119294,
+        blockNumber: 27004544,
       },
       mining: {
         auto: true,

@@ -19,12 +19,12 @@ describe("Simple Borrower", () => {
     SimpleVault = await ethers.getContract("SimpleVault", deployer);
     console.log(SimpleVault.address);
 
-    await LAYsToken.transferOwnership(SimpleVault.address);
+    // await LAYsToken.transferOwnership(SimpleVault.address);
 
     await LAYsToken.balanceOf(deployer);
   });
 
-  describe("Use Case 1: user deposits ether and receives stablecoin ", () => {
+  context("Use Case 1: user deposits ether and receives stablecoin ", () => {
     // borrow against 1 ether before every test
     before(async () => {
       depositTx = await SimpleVault.deposit(constants.WeiPerEther.toString(), {
@@ -51,9 +51,9 @@ describe("Simple Borrower", () => {
     it("should update user token balance", async () => {
       let ethPrice = await SimpleVault.getEthUSDPrice();
 
-      let expectedTokenBalance = ethers.BigNumber.from(constants.WeiPerEther.toString()).mul(
-        ethPrice
-      );
+      let expectedTokenBalance = ethers.BigNumber.from(constants.WeiPerEther.toString())
+        .mul(ethPrice)
+        .div(constants.WeiPerEther);
 
       assert.equal(
         updatedTokenBalance.toString(),
@@ -72,7 +72,7 @@ describe("Simple Borrower", () => {
     });
   });
 
-  describe("Use Case 2: user repays ALL tokens and withdraws ether ", () => {
+  context("Use Case 2: user repays ALL tokens and withdraws ether ", () => {
     before(async () => {
       withdrawTx = await SimpleVault.withdraw(updatedTokenBalance.toString());
       receipt = await withdrawTx.wait();

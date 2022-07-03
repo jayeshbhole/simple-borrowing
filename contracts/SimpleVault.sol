@@ -24,11 +24,8 @@ contract SimpleVault is PriceConsumerV3, ISimpleVault {
     function borrow(uint256 _collAmount) public payable override {
         require(_collAmount == msg.value);
 
-        // fetch price of ETH from oracle
-        uint256 ethPrice = getEthUSDPrice();
-
         // calculate amount of LAY to be minted
-        uint256 borrowAmount = (ethPrice) * ((_collAmount * collRatio) / 100);
+        uint256 borrowAmount = estimateTokenAmount(_collAmount);
 
         // mint LAY to borrowers account
         stableCoin.mint(msg.sender, borrowAmount);
@@ -51,7 +48,7 @@ contract SimpleVault is PriceConsumerV3, ISimpleVault {
         require(_collAmount <= vaults[msg.sender].debtAmount, "withdraw limit exceeded");
         require(stableCoin.balanceOf(msg.sender) >= _collAmount, "not enough LAYs");
 
-        uint256 amountToWithdraw = _collAmount / getEthUSDPrice();
+        uint256 amountToWithdraw = (_collAmount / getEthUSDPrice()) * (10**18);
         stableCoin.burn(msg.sender, _collAmount);
 
         vaults[msg.sender].collateralAmount -= amountToWithdraw;
@@ -82,7 +79,7 @@ contract SimpleVault is PriceConsumerV3, ISimpleVault {
         override
         returns (uint256 collateralAmount)
     {
-        return _stableCoinAmount / getEthUSDPrice();
+        return (_stableCoinAmount / getEthUSDPrice()) * (10**18);
     }
 
     /**
@@ -91,12 +88,13 @@ contract SimpleVault is PriceConsumerV3, ISimpleVault {
     @return tokenAmount  the estimated amount of stablecoin that would be minted
      */
     function estimateTokenAmount(uint256 _depositAmount)
-        external
+        public
         view
         override
         returns (uint256 tokenAmount)
     {
-        return _depositAmount * getEthUSDPrice();
+        uint256 tokens = (_depositAmount * getEthUSDPrice()) / (10**18);
+        return tokens;
     }
 
     // convert ETH/USD price from 8 decimals to 18
