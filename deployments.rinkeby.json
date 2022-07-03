@@ -3,7 +3,7 @@
   "chainId": "4",
   "contracts": {
     "LAYsToken": {
-      "address": "0x7D59FadDf81c42560D912F46500e24472B9912D4",
+      "address": "0x3ce62C054C04D9433a28eAe1Be6d794a89e11Ace",
       "abi": [
         {
           "inputs": [],
@@ -383,7 +383,7 @@
       ]
     },
     "SimpleVault": {
-      "address": "0x0bB4B972De08d6f658BB97F404Fa04563e210d56",
+      "address": "0x712E6550D1Bc727a6c62D579ca5a7956332a7381",
       "abi": [
         {
           "inputs": [
