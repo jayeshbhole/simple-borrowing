@@ -9,46 +9,30 @@ import {
 	Button,
 } from '@chakra-ui/react';
 import UserMenu from './UserMenu';
-import { ExternalLink, NavLink } from './Links';
+import { NavLink } from './Links';
 import { VscClose } from 'react-icons/vsc';
 import { RiMenu5Fill } from 'react-icons/ri';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useChain, useMoralis, useWeb3ExecuteFunction } from 'react-moralis';
-import getAbi from '../../../utils/getAbi';
-import getVaultAddr from '../../../utils/getAddr';
-import { useMemo } from 'react';
+import { useChain, useMoralis } from 'react-moralis';
+import { useEffect, useState } from 'react';
+import numberFormatter from '../../../utils/numberFormatter';
 
 const Navbar = (props) => {
 	const bgColor = useColorModeValue('whiteAlpha.800', 'blackAlpha.700');
 	const { isOpen, onToggle } = useDisclosure();
 	const { switchNetwork, chain } = useChain();
 	const {
-		user,
 		isWeb3Enabled,
 		account,
-		Moralis,
 		Moralis: { Units, web3 },
 	} = useMoralis();
-	const nativeBalance = useMemo(async () => {
-		isWeb3Enabled && account
-			? (await web3.getBalance(account)).toString()
-			: '0';
-	}, [account, chain, isWeb3Enabled]);
-	console.log(nativeBalance);
-
-	const { data: laysBalance } = useWeb3ExecuteFunction(
-		{
-			functionName: 'balanceOf',
-			abi: getAbi('LAYs'),
-			contractAddress: getVaultAddr(chain?.chainId, 'LAYs'),
-			params: {
-				_address: account,
-			},
-		},
-		{
-			autoFetch: true,
+	const [nativeBalance, setNativeBalance] = useState('0');
+	useEffect(async () => {
+		if (isWeb3Enabled && account) {
+			const bal = await web3.getBalance(account);
+			setNativeBalance(bal.toString());
 		}
-	);
+	}, [account, chain, isWeb3Enabled]);
 
 	return (
 		<>
@@ -91,8 +75,7 @@ const Navbar = (props) => {
 					)}
 
 					<Button size='md' mr='4'>
-						{/* {Units.ETH(nativeBalance || '0')} */}
-						{nativeBalance.toString()}
+						{numberFormatter(Units.FromWei(nativeBalance || '0'), 4)}
 					</Button>
 
 					<UserMenu />
