@@ -7,7 +7,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   await deploy("SimpleVault", {
     from: deployer,
-    args: [laysTokenAddr, "0x0715A7794a1dc8e42615F059dD6e406A6594651A"],
+    // args: [laysTokenAddr, "0x0715A7794a1dc8e42615F059dD6e406A6594651A"], // polygon mumbai
+    args: [laysTokenAddr, "0x8A753747A1Fa494EC906cE90E9f37563A8AF630e"], //rinkeby
     log: true,
   });
 
