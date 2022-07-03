@@ -9,6 +9,7 @@ import {
 	Flex,
 	useColorModeValue,
 	Code,
+	useInterval,
 } from '@chakra-ui/react';
 import Page from '../components/layouts/Page';
 import Borrow from '../components/Borrow';
@@ -43,6 +44,8 @@ const Landing = () => {
 			autoFetch: true,
 		}
 	);
+
+	useInterval(() => fetchLaysBalance(), 2000);
 
 	return (
 		<Page>
