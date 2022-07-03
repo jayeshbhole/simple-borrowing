@@ -11,6 +11,11 @@ contract PriceConsumerV3 {
      * Aggregator: ETH/USD
      * Address: 0x0715A7794a1dc8e42615F059dD6e406A6594651A
      */
+    /**
+     * Network: Rinkeby
+     * Aggregator: ETH/USD
+     * Address: 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
+     */
     constructor(address _priceFeed) {
         priceFeed = AggregatorV3Interface(_priceFeed);
     }

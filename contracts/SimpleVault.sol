@@ -4,6 +4,7 @@ pragma solidity 0.8.7;
 import "./PriceConsumerV3.sol";
 import "./IStable.sol";
 import "./ISimpleVault.sol";
+import "hardhat/console.sol";
 
 contract SimpleVault is PriceConsumerV3, ISimpleVault {
     IStable stableCoin;
@@ -79,7 +80,7 @@ contract SimpleVault is PriceConsumerV3, ISimpleVault {
         override
         returns (uint256 collateralAmount)
     {
-        return (_stableCoinAmount / getEthUSDPrice()) * (10**18);
+        return ((_stableCoinAmount * (10**18)) / getEthUSDPrice());
     }
 
     /**
