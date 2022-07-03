@@ -1,19 +1,14 @@
 import {
 	Box,
+	Button,
+	Code,
+	Divider,
 	Flex,
 	Input,
 	InputGroup,
 	InputLeftAddon,
-	NumberDecrementStepper,
-	NumberIncrementStepper,
-	NumberInput,
-	NumberInputField,
-	NumberInputStepper,
-	Slider,
-	SliderFilledTrack,
-	SliderMark,
-	SliderThumb,
-	SliderTrack,
+	Text,
+	useColorModeValue,
 } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -23,37 +18,42 @@ import {
 	useWeb3ExecuteFunction,
 } from 'react-moralis';
 import { simpleVaultAbi } from '../abi/simpleVaultAbi';
+import getAbi from '../utils/getAbi';
 import getVaultAddr from '../utils/getAddr';
 
 const Borrow = () => {
 	const { chain } = useChain();
 	const {
+		isWeb3Enabled,
 		account,
 		Moralis,
 		Moralis: { Units, web3 },
 	} = useMoralis();
 	const BigNumber = Moralis.web3Library.BigNumber;
-	const nativeBalance = useMemo(
-		async () => (account ? (await web3.getBalance(account)).toString() : '0'),
-		[account]
-	);
+	const [nativeBalance, setNativeBalance] = useState('0');
+	useEffect(async () => {
+		if (isWeb3Enabled && account) {
+			const bal = await web3.getBalance(account);
+			setNativeBalance(bal.toString());
+		}
+	}, [account, chain, isWeb3Enabled]);
 
 	const [collateral, setCollateral] = useState('0');
-	// const [sliderPercent, setSliderPercent] = useState(0);
-	const handleChange = (value = 0) => {
-		setCollateral(value.toString());
-		// set slider percent
-		// setSliderPercent(
-		// 	BigNumber.from(Units.ETH(value))
-		// 		.div(BigNumber.from(nativeBalance))
-		// 		.mul(100)
-		// 		.toString()
-		// );
+	const handleChange = (e) => {
+		setCollateral(e.target.value.toString());
 	};
-	// const handleSliderChange = (percent = 0) => {
-	// 	// setSliderPercent(percent);
-	// 	setCollateral(BigNumber.from(nativeBalance).mul(percent / 100));
-	// };
+	// estimate estimateTokenAmount
+	const { data: estimatedLoanAmount } = useWeb3ExecuteFunction(
+		{
+			functionName: 'estimateTokenAmount',
+			abi: simpleVaultAbi,
+			contractAddress: getVaultAddr(chain?.chainId, 'vault'),
+			params: {
+				_depositAmount: Units.ETH(collateral ?? '0'),
+			},
+		},
+		{ autoFetch: true }
+	);
 
 	// fetch vault details
 	const { data: vaultData, fetch: fetchVault } = useWeb3ExecuteFunction(
@@ -65,9 +65,7 @@ const Borrow = () => {
 				_address: account,
 			},
 		},
-		{
-			autoFetch: false,
-		}
+		{ autoFetch: false }
 	);
 	useEffect(() => {
 		fetchVault();
@@ -77,58 +75,77 @@ const Borrow = () => {
 			setCollateral(vaultData.collateralAmount.toString());
 	}, [vaultData]);
 
-	return (
-		<Flex maxW='60ch' alignSelf={'center'} direction='column' py='10' gap='6'>
-			<>
-				{/* Number Input */}
-				<label htmlFor='collateral'>Collateral Amount</label>
-				<NumberInput w='100%' value={collateral} onChange={handleChange}>
-					<NumberInputField />
-					<NumberInputStepper>
-						<NumberIncrementStepper />
-						<NumberDecrementStepper />
-					</NumberInputStepper>
-				</NumberInput>
-				{/* <Slider
-					flex='1'
-					focusThumbOnChange={false}
-					value={sliderPercent}
-					onChange={handleSliderChange}
-				>
-					<SliderMark value={25} {...labelStyles}>
-						25%
-					</SliderMark>
-					<SliderMark value={50} {...labelStyles}>
-						50%
-					</SliderMark>
-					<SliderMark value={75} {...labelStyles}>
-						75%
-					</SliderMark>
-					<SliderTrack>
-						<SliderFilledTrack />
-					</SliderTrack>
-					<SliderThumb fontSize='sm' boxSize='32px' />
-				</Slider> */}
-			</>
+	// LAYs balance
+	const { data: laysBalance } = useWeb3ExecuteFunction(
+		{
+			functionName: 'balanceOf',
+			abi: getAbi('LAYs'),
+			contractAddress: getVaultAddr(chain?.chainId, 'LAYs'),
+			params: {
+				_address: account,
+			},
+		},
+		{
+			autoFetch: true,
+		}
+	);
 
-			{/* Eligible loan */}
-			<InputGroup>
-				<InputLeftAddon>$</InputLeftAddon>
-				<Input
-					type='number'
-					placeholder='ETH AMount'
-					onChange={() => {}}
-					value={'0'}
-				/>
-			</InputGroup>
+	return (
+		<Flex
+			maxW='60ch'
+			alignSelf={'center'}
+			direction='column'
+			py='10'
+			px='10'
+			gap='6'
+			backgroundColor={useColorModeValue('bg.white.50', 'bg.dark.800')}
+			borderRadius='6'
+		>
+			<Box>
+				<label htmlFor='collateral'>Current Collateral</label>
+				<InputGroup>
+					<InputLeftAddon>ETH</InputLeftAddon>
+					<Input type='number' value={collateral} onChange={handleChange} />
+				</InputGroup>
+			</Box>
+
+			<Box>
+				{/* Eligible loan */}
+				<label htmlFor='loanAmount'>
+					Loan (in LAYs)
+					<InputGroup>
+						<InputLeftAddon>$</InputLeftAddon>
+						<Input
+							type='number'
+							placeholder='ETH AMount'
+							onChange={() => {}}
+							value={Units.FromWei(estimatedLoanAmount ?? '0')}
+						/>
+					</InputGroup>
+				</label>
+			</Box>
+
+			<Button
+				disabled={collateral === vaultData?.collateralAmount.toString()}
+				variant='solid'
+				colorScheme={
+					collateral > vaultData?.collateralAmount.toString()
+						? 'green'
+						: 'orange'
+				}
+			>
+				{collateral > vaultData?.collateralAmount.toString()
+					? 'Deposit'
+					: 'Withdraw'}
+			</Button>
+
+			<Divider />
+
+			<Code p='2' colorScheme='teal'>
+				Lays Balance: {Units.FromWei(laysBalance ?? '0')}
+			</Code>
 		</Flex>
 	);
-};
-
-const labelStyles = {
-	mt: '2',
-	ml: '-2.5',
-	fontSize: 'sm',
 };
 
 export default Borrow;

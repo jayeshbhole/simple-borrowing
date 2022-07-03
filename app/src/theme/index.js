@@ -29,7 +29,7 @@ const styles = {
 			fontSize: '16px',
 		},
 		body: {
-			color: '#4f4f4f',
+			// color: '#4f4f4f',
 			background: mode(
 				"url('/bg-tile-light.png')",
 				"url('/bg-tile-dark.png')"
