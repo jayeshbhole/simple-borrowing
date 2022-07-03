@@ -1,6 +1,6 @@
 import { simpleVaultAbi } from '../abi/simpleVaultAbi';
 import { laysAbi } from '../abi/LAYsAbi';
-const getAbi = (chainId, contract) => {
+const getAbi = (contract) => {
 	if (contract === 'vault') {
 		return simpleVaultAbi;
 	}
